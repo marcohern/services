@@ -65,21 +65,21 @@ class DATABASE_CONFIG {
 		'datasource' => 'Database/Mysql',
 		'persistent' => false,
 		'host' => 'localhost',
-		'login' => 'user',
-		'password' => 'password',
-		'database' => 'database_name',
-		'prefix' => '',
-		//'encoding' => 'utf8',
+		'login' => 'marcoher_serv',
+		'password' => 'ew$(%GD^g-{h',
+		'database' => 'marcoher_serv',
+		'prefix' => 'mrc_',
+		'encoding' => 'utf8',
 	);
 
 	public $test = array(
 		'datasource' => 'Database/Mysql',
 		'persistent' => false,
 		'host' => 'localhost',
-		'login' => 'user',
-		'password' => 'password',
-		'database' => 'test_database_name',
-		'prefix' => '',
-		//'encoding' => 'utf8',
+		'login' => 'marcoher_serv',
+		'password' => 'ew$(%GD^g-{h',
+		'database' => 'marcoher_serv',
+		'prefix' => 'mrc_',
+		'encoding' => 'utf8',
 	);
 }
