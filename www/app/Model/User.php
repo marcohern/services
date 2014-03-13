@@ -1,6 +1,6 @@
 <?php
 
-public User extends AppModel {
+class User extends AppModel {
 	
 }
 
