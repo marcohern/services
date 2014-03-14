@@ -4,19 +4,31 @@ App::uses('Component','Controller');
 
 class BellarophonComponent extends Component {
 
+	private $apikey;
+	private $token;
+
 	public $components = array('Security');
+
+	private $deny = array();
 
 	private static $df = "Y-m-d H:i:s";
 	private static $symbols = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-_*";
+	private static $cookie = 'mrc_token';
 
 	public function initialize(Controller $controller) {
+		$this->retrieveApikey($controller);
+		$this->apikey = null;
+		$this->token = null;
 
-	}
-
-	public function startup(Controller $controller) {
 		$this->Security->csrfCheck = false;
 		$this->Security->validatePost = false;
 	}
+
+	public function startup(Controller $controller) {
+		if ($this->isDenied($controller)) {
+			$controller->redirect("allowed");
+		}
+	} 
 
 	public function beforeRender(Controller $controller) {
 
@@ -30,12 +42,48 @@ class BellarophonComponent extends Component {
 
 	}
 
+	private function retrieveApikey(Controller $c) {
+		if ($c->request->data) {
+			if (array_key_exists('apikey', $c->request->data)) {
+				$this->apikey = $c->request->data['apikey'];
+			}
+		}
+	}
+
+	private function retrieveToken(Controller $c) {
+		if ($c->request->data) {
+			if (array_key_exists(self::$cookie, $_COOKIE)) {
+
+			}
+		}
+	}
+
+	private function isDenied(Controller $controller) {
+		$action = $controller->request->params['action'];
+		$found = false;
+		foreach($this->deny as $denied) {
+			if ($action === $denied) {
+				$found = true;
+				break;
+			}
+		}
+		return $found;
+	}
+
+	public function deny($actions) {
+		if (is_array($actions)) {
+			$this->deny = array_merge($this->deny, $actions);
+		} else {
+			$this->deny[] = $actions;
+		}
+	}
+
 	public function createUserToken($user_id) {
 		$token = uniqid("", true);
 		$created = new DateTime();
 		$duration = new DateInterval("P1D");
 		$expires = $created->add($duration);
-		setcookie("mrc_token", $token, $expires->getTimeStamp());
+		setcookie(self::$cookie, $token, $expires->getTimeStamp());
 		return array(
 			'UserToken' => array(
 				'id' => null,
@@ -49,7 +97,7 @@ class BellarophonComponent extends Component {
 	}
 
 	public function destroyCurrentUserToken() {
-		setcookie("mrc_token", "", time()-1);
+		setcookie(self::$cookie, "", time()-1);
 	}
 
 	private function generateApikey() {
@@ -80,42 +128,10 @@ class BellarophonComponent extends Component {
 		);
 	}
 
-	public function createUser($id, $username, $password, $email, $role, $pmode) {
-		$pn = Security::hash($password);
-		return array(
-			'User' => array(
-				'id' => $id,
-				'username' => $username,
-				'password' => $pn,
-				'email' => $email,
-				'role' => $role,
-				'pmode' => $pmode,
-				'created' => date(self::$df),
-				'updated' => null
-			)
-		);
-	}
-
-	private function hashPassword($password, $rand1, $rand2) {
+	public function hashPassword($password, $rand1, $rand2) {
 		$s1 = sha1($rand1);
 		$s2 = sha1($rand2);
 		return sha1($s1.$password.$s2);
-	}
-
-	public function createUserPassword($id, $user_id, $password) {
-		$r1 = rand(1000000, 9999999);
-		$r2 = rand(1000000, 9999999);
-		$pe = $this->hashPassword($password, $r1, $r2);
-
-		return array(
-			'UserPassword' => array(
-				'id' => $id,
-				'user_id' => $user_id,
-				'rand1' => $r1,
-				'rand2' => $r2,
-				'password' => $pe
-			)
-		);
 	}
 
 	public function compareUserPassword(array $user, $password) {

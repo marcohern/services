@@ -32,16 +32,9 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 
-	public $components = array('Bellarophon');
+	public $components = array('Zeus', 'Bellarophon');
 	protected $token;
-	protected $apikey;
 
 	public function beforeFilter() {
-		$this->apikey = null;
-		if ($this->request->data) {
-			if (array_key_exists('apikey', $this->request->data)) {
-				$this->apikey = $this->request->data['apikey'];
-			}
-		}
 	}
 }

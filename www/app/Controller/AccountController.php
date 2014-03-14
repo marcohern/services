@@ -109,8 +109,8 @@ class AccountController extends AppController {
 
 		$password = 'system';
 		$user = array_merge(
-			$this->Bellarophon->createUser(1, 'marcohern',$password, 'marcohern@gmail.com','ADMIN','EXTENDED'),
-			$this->Bellarophon->createUserPassword(1, 1, $password)
+			$this->Zeus->createUser(1, 'marcohern',$password, 'marcohern@gmail.com','ADMIN','EXTENDED'),
+			$this->Zeus->createUserPassword(1, 1, $password)
 		);
 
 		$u = $this->User->saveAssociated($user);

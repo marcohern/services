@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS mrc_user_tokens;
 CREATE TABLE mrc_user_tokens (
 	id      BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	user_id BIGINT NOT NULL,
-	token   CHAR(40) NOT NULL UNIQUE,
+	token   VARCHAR(32) NOT NULL UNIQUE,
 	active  ENUM('Y','N') DEFAULT 'N',
 	created DATETIME NOT NULL,
 	expires DATETIME NOT NULL

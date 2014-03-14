@@ -4,6 +4,11 @@ class CountriesController extends AppController {
 
 	public $uses = array('Country');
 
+	public function beforeFilter() {
+		parent::beforeFilter();
+		//$this->Bellarophon->deny('index');
+	}
+
 	private function convertCountriesToSimple($countries) {
 		$r = array();
 		foreach ($countries as $c) {
@@ -17,20 +22,18 @@ class CountriesController extends AppController {
 		return $r;
 	}
 
+	public function allowed() {
+		return $this->Bellarophon->response(array('allowed' => true));
+	}
+
 	public function index() {
 		$r = $this->Country->find('all');
-		return new CakeResponse(array(
-			'type' => 'application/json',
-			'body' => json_encode($r)
-		));
+		return $this->Bellarophon->response($r);
 	}
 
 	public function i() {
 		$r = $this->convertCountriesToSimple($this->Country->find('all'));
-		return new CakeResponse(array(
-			'type' => 'application/json',
-			'body' => json_encode($r)
-		));
+		return $this->Bellarophon->response($r);
 	}
 
 	public function qn($word = '', $max = 0) {
@@ -40,10 +43,7 @@ class CountriesController extends AppController {
 			)
 		));
 		$r = $this->convertCountriesToSimple($r);
-		return new CakeResponse(array(
-			'type' => 'application/json',
-			'body' => json_encode($r)
-		));
+		return $this->Bellarophon->response($r);
 	}
 }
 
