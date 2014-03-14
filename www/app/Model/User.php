@@ -1,7 +1,7 @@
 <?php
 
 class User extends AppModel {
-	public $hasOne = array('UserPassword');
+	public $hasOne = array('UserPassword','UserToken','Apikey');
 }
 
 ?>

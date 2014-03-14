@@ -6,6 +6,7 @@ class BellarophonComponent extends Component {
 
 	public $components = array('Security');
 
+	private static $df = "Y-m-d H:i:s";
 	private static $symbols = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-_*";
 
 	public function initialize(Controller $controller) {
@@ -29,6 +30,28 @@ class BellarophonComponent extends Component {
 
 	}
 
+	public function createUserToken($user_id) {
+		$token = uniqid("", true);
+		$created = new DateTime();
+		$duration = new DateInterval("P1D");
+		$expires = $created->add($duration);
+		setcookie("mrc_token", $token, $expires->getTimeStamp());
+		return array(
+			'UserToken' => array(
+				'id' => null,
+				'user_id' => $user_id,
+				'token' => $token,
+				'active' => 'Y',
+				'created' => $created->format(self::$df),
+				'expires' => $expires->format(self::$df)
+			)
+		);
+	}
+
+	public function destroyCurrentUserToken() {
+		setcookie("mrc_token", "", time()-1);
+	}
+
 	private function generateApikey() {
 		$slen = strlen(self::$symbols);
 		$key = '';
@@ -41,50 +64,52 @@ class BellarophonComponent extends Component {
 	}
 
 	public function createApikey($user_id) {
-		$format = "Y-m-d H:i:s";
 		$created = new DateTime();
-		$date = date("Y-m-d H:i:s");
+		$date = date(self::$df);
 		$key = $this->generateApikey();
 
 		return array(
-			'user_id' => $user_id,
-			'apikey' => $key,
-			'active' => 'Y',
-			'created' => $created->format($format),
-			'deactivated' => null
+			'Apikey' => array(
+				'id' => null,
+				'user_id' => $user_id,
+				'apikey' => $key,
+				'active' => 'Y',
+				'created' => $created->format(self::$df),
+				'deactivated' => null
+			)
 		);
 	}
 
-	public function createUser($username, $password, $email, $role, $pmode) {
+	public function createUser($id, $username, $password, $email, $role, $pmode) {
 		$pn = Security::hash($password);
 		return array(
 			'User' => array(
-				'id' => null,
+				'id' => $id,
 				'username' => $username,
 				'password' => $pn,
 				'email' => $email,
 				'role' => $role,
 				'pmode' => $pmode,
-				'created' => date("Y-m-d H:i:s"),
+				'created' => date(self::$df),
 				'updated' => null
 			)
 		);
 	}
 
-	public function hashPassword($password, $rand1, $rand2) {
+	private function hashPassword($password, $rand1, $rand2) {
 		$s1 = sha1($rand1);
 		$s2 = sha1($rand2);
 		return sha1($s1.$password.$s2);
 	}
 
-	public function createUserPassword($user_id, $password) {
+	public function createUserPassword($id, $user_id, $password) {
 		$r1 = rand(1000000, 9999999);
 		$r2 = rand(1000000, 9999999);
 		$pe = $this->hashPassword($password, $r1, $r2);
 
 		return array(
 			'UserPassword' => array(
-				'id' => null,
+				'id' => $id,
 				'user_id' => $user_id,
 				'rand1' => $r1,
 				'rand2' => $r2,
@@ -110,9 +135,12 @@ class BellarophonComponent extends Component {
 	}
 
 	public function response(array $result) {
-		return new CakeResponse(array(
+		$response = new CakeResponse(array(
 			'body' => json_encode($result)
 		));
+		$response->type(array('json' => 'application/json'));
+		$response->type('json');
+		return $response;
 	}
 }
 

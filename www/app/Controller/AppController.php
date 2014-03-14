@@ -31,4 +31,17 @@ App::uses('Controller', 'Controller');
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
+
+	public $components = array('Bellarophon');
+	protected $token;
+	protected $apikey;
+
+	public function beforeFilter() {
+		$this->apikey = null;
+		if ($this->request->data) {
+			if (array_key_exists('apikey', $this->request->data)) {
+				$this->apikey = $this->request->data['apikey'];
+			}
+		}
+	}
 }
