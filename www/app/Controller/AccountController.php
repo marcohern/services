@@ -3,7 +3,7 @@
 class AccountController extends AppController {
 
 	public $uses = array('User','UserPassword');
-	public $components = array('Security');
+	public $components = array('Security','Bellarophon');
 
 	public static $LOGINR_OK = 1;
 	public static $LOGINR_DENIED = 2;
@@ -14,6 +14,13 @@ class AccountController extends AppController {
 
 		$this->Security->csrfCheck = false;
 		$this->Security->validatePost = false;
+	}
+
+	public function createApikey() {
+		$apikey = $this->Bellarophon->createApikey(1);
+		return new CakeResponse(array(
+			'body' => json_encode($apikey)
+		));
 	}
 
 	private function checkLogin($username, $password) {
