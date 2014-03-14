@@ -4,6 +4,8 @@ App::uses('Component','Controller');
 
 class BellarophonComponent extends Component {
 
+	public $components = array('Security');
+
 	private static $symbols = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-_*";
 
 	public function initialize(Controller $controller) {
@@ -11,7 +13,8 @@ class BellarophonComponent extends Component {
 	}
 
 	public function startup(Controller $controller) {
-
+		$this->Security->csrfCheck = false;
+		$this->Security->validatePost = false;
 	}
 
 	public function beforeRender(Controller $controller) {
@@ -50,6 +53,66 @@ class BellarophonComponent extends Component {
 			'created' => $created->format($format),
 			'deactivated' => null
 		);
+	}
+
+	public function createUser($username, $password, $email, $role, $pmode) {
+		$pn = Security::hash($password);
+		return array(
+			'User' => array(
+				'id' => null,
+				'username' => $username,
+				'password' => $pn,
+				'email' => $email,
+				'role' => $role,
+				'pmode' => $pmode,
+				'created' => date("Y-m-d H:i:s"),
+				'updated' => null
+			)
+		);
+	}
+
+	public function hashPassword($password, $rand1, $rand2) {
+		$s1 = sha1($rand1);
+		$s2 = sha1($rand2);
+		return sha1($s1.$password.$s2);
+	}
+
+	public function createUserPassword($user_id, $password) {
+		$r1 = rand(1000000, 9999999);
+		$r2 = rand(1000000, 9999999);
+		$pe = $this->hashPassword($password, $r1, $r2);
+
+		return array(
+			'UserPassword' => array(
+				'id' => null,
+				'user_id' => $user_id,
+				'rand1' => $r1,
+				'rand2' => $r2,
+				'password' => $pe
+			)
+		);
+	}
+
+	public function compareUserPassword(array $user, $password) {
+		$pwd = null;
+		$p = null;
+		$pmode = $user['User']['pmode'];
+		if ($pmode === 'NATIVE') {
+			$pwd = $user['User']['password'];
+			$p = Security::hash($password, null, true);
+		} else if ($pmode === 'EXTENDED') {
+			$r1 = $user['UserPassword']['rand1'];
+			$r2 = $user['UserPassword']['rand2'];
+			$pwd = $user['UserPassword']['password'];
+			$p = $this->hashPassword($password, $r1, $r2);
+		}
+		return ($pwd === $p) ? true : false;
+	}
+
+	public function response(array $result) {
+		return new CakeResponse(array(
+			'body' => json_encode($result)
+		));
 	}
 }
 

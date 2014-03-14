@@ -8,6 +8,11 @@ CREATE TABLE mrc_users (
 	email    VARCHAR(128) NOT NULL UNIQUE,
 	role     ENUM('ADMIN','USER') NOT NULL DEFAULT 'ADMIN',
 	pmode    ENUM('NATIVE','EXTENDED') NOT NULL DEFAULT 'NATIVE',
+
+	preset   ENUM('Y','N') NOT NULL DEFAULT 'N',
+	ptoken   CHAR(40)         NULL,
+	ptokex   DATETIME         NULL,
+	
 	created  DATETIME     NOT NULL,
 	updated  DATETIME         NULL
 )CHARSET='utf8' COLLATE='utf8_general_ci';
