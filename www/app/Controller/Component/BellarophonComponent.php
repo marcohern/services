@@ -28,7 +28,7 @@ class BellarophonComponent extends Component {
 		if ($this->isDenied($controller)) {
 			$controller->redirect("allowed");
 		}
-	} 
+	}
 
 	public function beforeRender(Controller $controller) {
 
@@ -154,8 +154,12 @@ class BellarophonComponent extends Component {
 		$response = new CakeResponse(array(
 			'body' => json_encode($result)
 		));
+		
 		$response->type(array('json' => 'application/json'));
 		$response->type('json');
+		$response->header(array(
+			'Access-Control-Allow-Origin' => '*'
+		));
 		return $response;
 	}
 }
