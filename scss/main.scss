@@ -1,0 +1,38 @@
+//@import "clear.scss";
+
+/**
+ * Main Styles
+ **/
+
+@mixin border-radius-all($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+       -o-border-radius: $radius;
+          border-radius: $radius;
+}
+
+@mixin border-radius-each($r1, $r2, $r3, $r4) {
+  -webkit-border-radius: $r1 $r2 $r3 $r4;
+     -moz-border-radius: $r1 $r2 $r3 $r4;
+      -ms-border-radius: $r1 $r2 $r3 $r4;
+       -o-border-radius: $r1 $r2 $r3 $r4;
+          border-radius: $r1 $r2 $r3 $r4;
+}
+
+@mixin box-shadow($hoffset, $voffset, $blur, $spread, $color) {
+  -webkit-box-shadow: $hoffset $voffset $blur $spread $color;
+     -moz-box-shadow: $hoffset $voffset $blur $spread $color;
+      -ms-box-shadow: $hoffset $voffset $blur $spread $color;
+       -o-box-shadow: $hoffset $voffset $blur $spread $color;
+          box-shadow: $hoffset $voffset $blur $spread $color;
+}
+
+.shadow-test {
+  @include border-radius-all(16px);
+  @include box-shadow(8px, 8px, 16px, 0, #666);
+
+  border: 1px solid #000;
+  padding: 32px;
+  margin-bottom: 16px;
+}

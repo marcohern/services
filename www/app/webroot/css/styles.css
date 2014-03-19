@@ -1,0 +1,17 @@
+/**
+ * Main Styles
+ **/
+.shadow-test {
+  -webkit-border-radius: 16px;
+  -moz-border-radius: 16px;
+  -ms-border-radius: 16px;
+  -o-border-radius: 16px;
+  border-radius: 16px;
+  -webkit-box-shadow: 8px 8px 16px 0 #666666;
+  -moz-box-shadow: 8px 8px 16px 0 #666666;
+  -ms-box-shadow: 8px 8px 16px 0 #666666;
+  -o-box-shadow: 8px 8px 16px 0 #666666;
+  box-shadow: 8px 8px 16px 0 #666666;
+  border: 1px solid #000;
+  padding: 32px;
+  margin-bottom: 16px; }
